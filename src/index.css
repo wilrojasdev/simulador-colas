@@ -1,0 +1,282 @@
+@import "tailwindcss";
+
+/* Sala de espera: pared clara, tinta azul oscura, amarillo de señalización (= fila) y un tablero LED. */
+@theme {
+  --font-sans: "Barlow", ui-sans-serif, system-ui, sans-serif;
+  --font-cond: "Barlow Condensed", "Barlow", ui-sans-serif, system-ui, sans-serif;
+  --font-led: "Doto", ui-monospace, monospace;
+
+  /* Tema por defecto: Arcilla */
+  --color-pared: #efe6da;
+  --color-papel: #fffaf2;
+  --color-piso: #e4d6c3;
+  --color-tinta: #2b2135;
+  --color-suave: #6b5d70;
+  --color-linea: rgb(43 33 53 / 0.14);
+  --color-senal: #ffb627;
+  --color-sobresenal: #2b2135;
+  --color-tablero: #231a2b;
+  --color-led: #ffa31a;
+  --color-alerta: #d1495b;
+  --color-gris: #c9bcae;
+
+  --shadow-panel: 0 1px 0 rgb(255 255 255 / 0.7) inset, 0 1px 2px rgb(43 33 53 / 0.08), 0 6px 14px -4px rgb(43 33 53 / 0.14),
+    0 18px 32px -12px rgb(43 33 53 / 0.18);
+  --shadow-alto: 0 2px 3px rgb(43 33 53 / 0.1), 0 10px 20px -6px rgb(43 33 53 / 0.2), 0 24px 40px -14px rgb(43 33 53 / 0.22);
+  --shadow-tecla: 0 2px 0 rgb(43 33 53 / 0.55), 0 5px 10px -2px rgb(43 33 53 / 0.3);
+  --shadow-campo: inset 0 2px 4px rgb(43 33 53 / 0.14), inset 0 0 0 1px rgb(43 33 53 / 0.04);
+  --color-campo: #fffdf9;
+
+  --ease-salida: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+:root {
+  color-scheme: light;
+}
+
+/* Temas: redefinen las mismas variables */
+html[data-tema='noche'] {
+  color-scheme: dark;
+  --color-pared: #0e1020;
+  --color-papel: #171a2e;
+  --color-piso: #1d2140;
+  --color-tinta: #eef0ff;
+  --color-suave: #a3a9c9;
+  --color-linea: rgb(238 240 255 / 0.12);
+  --color-senal: #ffd23f;
+  --color-sobresenal: #0e1020;
+  --color-tablero: #07080f;
+  --color-led: #ffb02e;
+  --color-alerta: #ff5d73;
+  --color-gris: #4a4f73;
+  --shadow-panel: 0 1px 0 rgb(255 255 255 / 0.06) inset, 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 18px -4px rgb(0 0 0 / 0.5),
+    0 20px 36px -12px rgb(0 0 0 / 0.55);
+  --shadow-alto: 0 2px 3px rgb(0 0 0 / 0.4), 0 12px 24px -6px rgb(0 0 0 / 0.6), 0 26px 44px -14px rgb(0 0 0 / 0.6);
+  --shadow-tecla: 0 2px 0 rgb(0 0 0 / 0.7), 0 5px 10px -2px rgb(0 0 0 / 0.5);
+  --shadow-campo: inset 0 2px 4px rgb(0 0 0 / 0.5), inset 0 0 0 1px rgb(255 255 255 / 0.04);
+  --color-campo: #0f1124;
+}
+
+html[data-tema='clasico'] {
+  --color-pared: #e9e4d8;
+  --color-papel: #f9f6ef;
+  --color-piso: #d9d0bd;
+  --color-tinta: #1d3b2f;
+  --color-suave: #5a6b61;
+  --color-linea: rgb(29 59 47 / 0.15);
+  --color-senal: #d4a72c;
+  --color-sobresenal: #1d3b2f;
+  --color-tablero: #14231c;
+  --color-led: #ffb43a;
+  --color-alerta: #a63d40;
+  --color-gris: #b9b19d;
+  --shadow-panel: 0 1px 0 rgb(255 255 255 / 0.7) inset, 0 1px 2px rgb(29 59 47 / 0.1), 0 6px 14px -4px rgb(29 59 47 / 0.16),
+    0 18px 32px -12px rgb(29 59 47 / 0.2);
+  --shadow-alto: 0 2px 3px rgb(29 59 47 / 0.12), 0 10px 20px -6px rgb(29 59 47 / 0.22), 0 24px 40px -14px rgb(29 59 47 / 0.25);
+  --shadow-tecla: 0 2px 0 rgb(29 59 47 / 0.6), 0 5px 10px -2px rgb(29 59 47 / 0.3);
+  --shadow-campo: inset 0 2px 4px rgb(29 59 47 / 0.16), inset 0 0 0 1px rgb(29 59 47 / 0.05);
+  --color-campo: #fffdf8;
+}
+
+html {
+  background: var(--color-pared);
+}
+html,
+body {
+  transition: background-color 250ms var(--ease-salida), color 250ms var(--ease-salida);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--color-pared);
+  color: var(--color-tinta);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+@utility panel {
+  background: var(--color-papel);
+  border: 1px solid var(--color-linea);
+  border-radius: 14px;
+  box-shadow: var(--shadow-panel);
+}
+
+/* Tarjeta elevada (selector de modelo) */
+@utility elevada {
+  box-shadow: var(--shadow-alto);
+}
+
+/* Botón tipo tecla: sombra inferior; al pulsar baja 2px */
+@utility tecla {
+  box-shadow: var(--shadow-tecla);
+  transition:
+    transform 120ms var(--ease-salida),
+    box-shadow 120ms var(--ease-salida),
+    background-color 160ms var(--ease-salida);
+  &:active {
+    transform: translateY(2px);
+    box-shadow: 0 0 0 rgb(0 0 0 / 0), 0 1px 3px rgb(0 0 0 / 0.25);
+  }
+}
+
+/* Campo hundido */
+@utility campo {
+  background: var(--color-campo);
+  box-shadow: var(--shadow-campo);
+}
+
+/* Baldosas del piso de la sala */
+@utility piso {
+  background-color: var(--color-piso);
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.45) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.45) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* Franja de advertencia para el sistema inestable */
+@utility peligro {
+  background: repeating-linear-gradient(-45deg, var(--color-senal) 0 14px, var(--color-tinta) 14px 28px);
+}
+
+button {
+  cursor: pointer;
+}
+
+/* Respuesta táctil de los botones */
+.pulsable {
+  transition:
+    transform 160ms var(--ease-salida),
+    background-color 160ms var(--ease-salida),
+    color 160ms var(--ease-salida);
+}
+.pulsable:active {
+  transform: scale(0.97);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-tinta);
+  outline-offset: 2px;
+}
+
+/* Personas: piernas que caminan y un leve balanceo, solo mientras se mueven */
+.persona {
+  overflow: visible;
+}
+.persona .pierna {
+  transform-box: fill-box;
+  transform-origin: 50% 8%;
+}
+.persona .relleno {
+  transition: fill 200ms var(--ease-salida);
+}
+.persona.andando .pierna-a {
+  animation: paso var(--ritmo) ease-in-out infinite alternate;
+}
+.persona.andando .pierna-b {
+  animation: paso var(--ritmo) ease-in-out infinite alternate-reverse;
+}
+.persona.andando .torso {
+  animation: rebote calc(var(--ritmo) / 2) ease-in-out infinite alternate;
+}
+@keyframes paso {
+  from {
+    transform: rotate(-22deg);
+  }
+  to {
+    transform: rotate(22deg);
+  }
+}
+@keyframes rebote {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-1.4px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .persona.andando .pierna-a,
+  .persona.andando .pierna-b,
+  .persona.andando .torso {
+    animation: none;
+  }
+}
+
+/* Ticket de turno con muescas a los lados */
+.ticket {
+  -webkit-mask:
+    radial-gradient(circle 3.5px at 0 50%, #0000 96%, #000) left / 51% 100% no-repeat,
+    radial-gradient(circle 3.5px at 100% 50%, #0000 96%, #000) right / 51% 100% no-repeat;
+  mask:
+    radial-gradient(circle 3.5px at 0 50%, #0000 96%, #000) left / 51% 100% no-repeat,
+    radial-gradient(circle 3.5px at 100% 50%, #0000 96%, #000) right / 51% 100% no-repeat;
+}
+
+.led {
+  font-family: var(--font-led);
+  font-weight: 900;
+  color: var(--color-led);
+  text-shadow: 0 0 6px rgb(255 163 26 / 0.55);
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+}
+
+/* Deslizadores */
+input[type="range"].deslizador {
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(
+    to right,
+    var(--color-tinta) 0,
+    var(--color-tinta) var(--p),
+    color-mix(in srgb, var(--color-tinta) 18%, transparent) var(--p),
+    color-mix(in srgb, var(--color-tinta) 18%, transparent) 100%
+  );
+  cursor: pointer;
+  box-shadow: var(--shadow-campo);
+}
+input[type="range"].deslizador::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-senal);
+  border: 2px solid var(--color-tinta);
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.3);
+  transition: transform 150ms var(--ease-salida);
+}
+input[type="range"].deslizador:active::-webkit-slider-thumb {
+  transform: scale(1.12);
+}
+input[type="range"].deslizador::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-senal);
+  border: 2px solid var(--color-tinta);
+}
+
+.katex {
+  font-size: 1.05em;
+}
+.katex-display {
+  margin: 0.5rem 0 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.25rem 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
