@@ -23,7 +23,8 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      # npm install y no npm ci: el lockfile hecho en macOS no trae unos paquetes opcionales de wasm que npm pide en Linux
+      - run: npm install --no-audit --no-fund
       - run: npm test
       - run: npm run build
       - uses: actions/configure-pages@v5
